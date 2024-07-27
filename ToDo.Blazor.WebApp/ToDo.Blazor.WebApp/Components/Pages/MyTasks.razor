@@ -1,0 +1,20 @@
+﻿@page "/mytasks/{id}"
+
+@using ToDo.Core.Services;
+@using ToDo.Core.Models;
+
+<h3>MyTasks</h3>
+
+@inject IService<MyTask> _service;
+
+@code {
+    private List<MyTask> Tasks;
+
+    protected override Task OnInitializedAsync()
+    {
+        var tasks = _service.GetAllAsync();
+
+        Tasks = tasks.to
+    }
+
+}

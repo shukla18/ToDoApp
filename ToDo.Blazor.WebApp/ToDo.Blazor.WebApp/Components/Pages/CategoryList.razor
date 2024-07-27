@@ -1,0 +1,57 @@
+﻿@page "/categories"
+@using ToDo.Core.Models;       
+@using ToDo.Core.Services;
+
+<h3>CategoryList</h3>
+
+@inject IService<Category> CategoryService
+
+<h3>Categories</h3>
+<ul>
+    @foreach (var category in Categories)
+    {
+        <li @ondblclick="() => EnableEditCategory(category)">
+            @if (category == EditingCategory)
+            {
+                <input @bind="category.Title" @bind:event="oninput" @onblur="() => SaveCategory(category)" />
+            }
+            else
+            {
+                <a href="/mytasks/@category.Id"><span @onclick="() => SelectCategory(category)">@category.Title</span></a>
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    private List<Category> Categories;
+    private Category EditingCategory;
+    private Category SelectedCategory;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cats = await CategoryService.GetAllAsync();
+
+        Categories = cats.ToList();
+    }
+
+    private void EnableEditCategory(Category category)
+    {
+        EditingCategory = category;
+    }
+
+    private async Task SaveCategory(Category category)
+    {
+        EditingCategory = null;
+        await CategoryService.UpdateAsync(category);
+        var cats = await CategoryService.GetAllAsync();
+
+        Categories = cats.ToList();
+    }
+
+    private void SelectCategory(Category category)
+    {
+        SelectedCategory = category;
+        // Additional logic to load tasks for the selected category
+    }
+}

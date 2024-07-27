@@ -1,0 +1,164 @@
+﻿@using ToDo.Core.Services;
+@using ToDo.Core.Models;
+@using ToDo.Blazor.WebApp.ViewModels;
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">ToDo.Blazor.WebApp</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+@* <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()"> *@
+    <div class="" onclick="">
+    <nav class="flex-column">
+
+        @foreach (var category in Categories)
+        {
+
+            <li @ondblclick="@(() => EnableEditCategory(category))">
+                @if (category == EditingCategory)
+                {
+                    <input @bind="category.Title" @bind:event="oninput" @onblur="() => SaveCategory(category)" />
+                }
+                else
+                {
+                    <span @onclick="() => SelectCategory(category)">@category.Title</span>
+                }
+            </li>
+
+           @*  <div class="nav-item px-3">
+                @if (item.IsEditing)
+                {
+                    <input type="text" @bind="item.Title" @onblur="() => SaveCategory(item)" />
+                }
+                else
+                {
+                    <span @onclick="() => EditCategoryName(item)">
+                        @item.Title
+                    </span>
+                   @*  <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        
+                </NavLink> 
+                  
+                }
+        </div>*@
+        }
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+      @*   <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="weather">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+            </NavLink>
+        </div> *@
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="categories">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> CategoryList
+            </NavLink>
+        </div>
+    </nav>
+</div>
+@code{
+
+    /*
+    List<CategoryView> CategoriesViews = new();
+    List<Category> Categories = new();
+
+
+    private CategoryView EditingCategory;
+    private CategoryView SelectedCategory;
+
+    [Inject]
+    private IService<Category> _service { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+        var categories = await _service.GetAllAsync();
+
+            foreach (var item in categories)
+            {
+            CategoriesViews.Add(new CategoryView() {  Id = item.Id, Title = item.Title, IsEditing = false });
+    }
+
+
+
+    // Categories = categories.ToList();
+    }
+
+        private void EnableEditCategory(CategoryView categoryView)
+    {
+    EditingCategory = categoryView;
+    }
+
+    private bool _isEditing;
+    private CategoryView? _categoryToEdit;
+
+    public void EditCategoryName(CategoryView categoryView)
+        {
+        categoryView.IsEditing = true;
+    _categoryToEdit = categoryView;
+    }
+
+    public async Task SaveCategory(CategoryView categoryView)
+        {
+        categoryView.IsEditing = false;
+
+        var category = new Category();
+        category.Id = categoryView.Id;
+        category.Title = categoryView.Title;
+
+        // Update category in your service
+        await _service.UpdateAsync(category);
+
+    }
+
+    */
+
+    private List<Category> Categories;
+    private Category EditingCategory;
+    private Category SelectedCategory;
+
+    [Inject]
+    private IService<Category> _service { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var categories = await _service.GetAllAsync();
+
+        Categories = categories.ToList();
+    }
+
+    private void EnableEditCategory(Category category)
+    {
+        EditingCategory = category;
+    }
+
+    private async void SaveCategory(Category category)
+    {
+        EditingCategory = null;
+        await _service.UpdateAsync(category);
+        var categories = await _service.GetAllAsync();
+
+        Categories = categories.ToList();
+    }
+
+    private void SelectCategory(Category category)
+    {
+        SelectedCategory = category;
+        // Additional logic to load tasks for selected category
+    }
+}
+
